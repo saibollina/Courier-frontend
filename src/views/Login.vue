@@ -135,7 +135,7 @@ function closeSnackBar() {
           <v-radio-group v-model="user.role" inline>
             <v-radio label="Clerk" value="1"></v-radio>
             <v-radio label="Delivery Person" value="2"></v-radio>
-            <v-radio label="Customer" value="3"></v-radio>
+            <v-radio label="Admin" value="3"></v-radio>
           </v-radio-group>
         </v-card-text>
         <v-card-actions>
