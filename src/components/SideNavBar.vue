@@ -4,14 +4,18 @@ import { useRouter } from "vue-router";
 import {
   ChartPieIcon,
   HomeIcon,
+  UsersIcon,
+  TruckIcon
 } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import UserServices from "../services/UserServices.js";
 
-const navigation = [
-  { name: 'Dashboard', href: '#', icon: HomeIcon, count: '5', current: true },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, current: false },
-]
+const navigation = ref([
+  { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: true , roles:[1,2,3]},
+  { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: false , roles:[1]},
+  { name: 'Employees', href: '#', icon: UsersIcon, count:'',current: false, roles: [3] },
+  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: false, roles:[3]},
+])
 const router = useRouter();
 onMounted(async () => {
   if (localStorage.getItem("user") === null) {
@@ -53,9 +57,18 @@ function handleProfile (){
 function closeSnackBar() {
   snackbar.value.value = false;
 }
+
+function handleNavigation(item){
+  console.log('hello', navigation);
+  navigation.value.forEach((nav) => {
+    nav.current = (nav === item);
+  });
+  router.push({ name: item.name.toLowerCase()})
+
+}
 </script>
 <template>
-  <div class="flex flex-row h-screen">
+  <div class="hidden h-screen w-80 lg:inset-y-0 lg:flex lg:flex-col">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 container">
       <div class="flex h-16 shrink-0 items-center mt-2">
         <img class="h-8 w-auto" src="/favicon.ico"
@@ -66,14 +79,15 @@ function closeSnackBar() {
           <li>
             <ul role="list" class="-mx-2 space-y-1">
               <li v-for="item in navigation" :key="item.name">
-                <a :href="item.href"
-                  :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                  <component :is="item.icon" class="h-6 w-6 shrink-0" aria-hidden="true" />
+                <button v-if="item.roles.includes(loggedInUser.role)" :id="item.name"
+                  @click="handleNavigation(item)"
+                  :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                  <component :is="item.icon" class="h-6 w-6 shrink-0 mr-1" aria-hidden="true" />
                   {{ item.name }}
                   <span v-if="item.count"
                     class="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-gray-900 px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-white ring-1 ring-inset ring-gray-700"
                     aria-hidden="true">{{ item.count }}</span>
-                </a>
+                </button>
               </li>
             </ul>
           </li>
@@ -125,9 +139,6 @@ function closeSnackBar() {
       </nav>
     </div>
   <div>
-    <p>
-      Welcome {{loggedInUser?.firstName}}!!
-    </p>
   </div>
 </div>
 <v-snackbar v-model="snackbar.value" rounded="pill">
@@ -138,7 +149,7 @@ function closeSnackBar() {
           Close
         </v-btn>
       </template>
-    </v-snackbar>
+</v-snackbar>
 </template>
 <style>.container {
   max-width: 250px;
