@@ -14,7 +14,7 @@ const router = createRouter({
       component: () => import("./views/Login.vue"),
     },
     {
-      path: "/",
+      path: "/dashboard",
       name: "dashboard",
       component: () => import("./views/Dashboard.vue"),
     },
@@ -22,6 +22,26 @@ const router = createRouter({
       path:"/placeOrder",
       name:"place order",
       component: ()=> import("./views/placeOrder.vue"),
+    },
+    {
+      path:"/employees",
+      name:"employees",
+      component: ()=> import("./views/Employees.vue"),
+    },
+    {
+      path:"/clerks",
+      name:"clerks",
+      component: ()=> import("./views/Clerks.vue"),
+    },
+    {
+      path:"/deliveryPersons",
+      name:"delivery person",
+      component: ()=> import("./views/DeliverPersons.vue"),
+    },
+    {
+      path:"/customers",
+      name:"customers",
+      component: ()=> import("./views/Coustomers.vue"),
     }
   ],
 });

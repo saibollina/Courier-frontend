@@ -1,8 +1,6 @@
 import axios from "axios";
 
 var baseurl = "http://ec2-13-58-54-163.us-east-2.compute.amazonaws.com:3200/";
-
-
 const apiClient = axios.create({
   baseURL: baseurl,
   headers: {
@@ -34,3 +32,4 @@ const apiClient = axios.create({
 });
 
 export default apiClient;
+

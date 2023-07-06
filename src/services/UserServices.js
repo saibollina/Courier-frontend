@@ -1,11 +1,18 @@
 import apiClient from "./services";
 
 export default {
-  getUser() {
+  getUsers(userRole) {
+    if(userRole){
+
+      return apiClient.get("users",{ params: { userRole: userRole }});
+    }
     return apiClient.get("users");
   },
   addUser(user) {
     return apiClient.post("users", user);
+  },
+  updateUser(user) {
+    return apiClient.put(`users/${user.id}`, user);
   },
   loginUser(user) {
     console.log(user);
@@ -23,4 +30,13 @@ export default {
   logoutUser() {
     return apiClient.post("logout");
   },
+  getUserByEmail(email){
+    return apiClient.get(`users/email/${email}`)
+  },
+  getUserById(userId){
+    return apiClient.get(`users/${userId}`)
+  },
+  deleteUserById(userId){
+    return apiClient.delete(`users/${userId}`)
+  }
 };

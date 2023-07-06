@@ -9,14 +9,23 @@ import {
 } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import UserServices from "../services/UserServices.js";
+import { defineProps } from "vue";
 
+const props = defineProps(["showEmployeeSubNav"]);
+
+const router = useRouter();
+console.log("router", router)
 const navigation = ref([
-  { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: true , roles:[1,2,3]},
-  { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: false , roles:[1]},
-  { name: 'Employees', href: '#', icon: UsersIcon, count:'',current: false, roles: [3] },
+  { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: router.currentRoute.value.path ==='/dashboard' , roles:[1,2,3]},
+  { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: router.currentRoute.value.path ==='/placeOrder' , roles:[1]},
+  { name: 'Employees', href: '#', icon: UsersIcon, count:'',current: router.currentRoute.value.path ==='/employees', roles: [3],children: [
+      { name: 'Clerks', href: '#', current: router.currentRoute.value.path ==='/clerks' },
+      { name: 'Delivery Person', href: '#', current: router.currentRoute.value.path ==='/deliveryPersons' },
+      { name: 'Customers', href: '#', current: router.currentRoute.value.path ==='/customers' },
+    ], },
   { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: false, roles:[3]},
 ])
-const router = useRouter();
+
 onMounted(async () => {
   if (localStorage.getItem("user") === null) {
     router.push({ name: "login" });
@@ -27,6 +36,7 @@ const snackbar = ref({
   color: "",
   text: "",
 });
+const open = ref(props.showEmployeeSubNav);
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 async function handleSignout (){
   console.log("signing of", loggedInUser)
@@ -58,15 +68,36 @@ function closeSnackBar() {
   snackbar.value.value = false;
 }
 
-function handleNavigation(item){
-  console.log('hello', navigation);
-  navigation.value.forEach((nav) => {
-    nav.current = (nav === item);
-  });
-  router.push({ name: item.name.toLowerCase()})
+  function handleNavigation(item){
+    navigation.value.forEach((nav) => {
+      nav.current = (nav === item);
+    });
+    router.push({ name: item.name.toLowerCase()})
 
+  }
+
+  function handleSubItemNavigation(item, subItem){
+    console.log({item, subItem})
+    navigation.value.forEach((nav) => {
+      if(nav === item){
+        nav.children.forEach((subNav)=>{subNav.current = (subNav === subItem)});
+      }
+      else{
+        nav.current = false;
+      }
+    });
+    console.log('navigations', navigation);
+    router.push({ name: subItem.name.toLowerCase()})
+
+  }
+
+function handleDisclosure(){
+  console.log("handleDisclosure", open.value)
+  open.value = !open.value
+  console.log("after handleDisclosure", open.value)
 }
 </script>
+
 <template>
   <div class="hidden h-screen w-80 lg:inset-y-0 lg:flex lg:flex-col">
     <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 container">
@@ -79,7 +110,7 @@ function handleNavigation(item){
           <li>
             <ul role="list" class="-mx-2 space-y-1">
               <li v-for="item in navigation" :key="item.name">
-                <button v-if="item.roles.includes(loggedInUser.role)" :id="item.name"
+                <button v-if="item.roles.includes(loggedInUser.role) && !item.children" :id="item.name"
                   @click="handleNavigation(item)"
                   :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                   <component :is="item.icon" class="h-6 w-6 shrink-0 mr-1" aria-hidden="true" />
@@ -88,6 +119,24 @@ function handleNavigation(item){
                     class="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-gray-900 px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-white ring-1 ring-inset ring-gray-700"
                     aria-hidden="true">{{ item.count }}</span>
                 </button>
+                <template v-else-if="item.roles.includes(loggedInUser.role)">
+                  <button @click="handleNavigation(item);handleDisclosure()"
+                    :class="[item.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']"
+                  >
+                    <component :is="item.icon" class="h-6 w-6 shrink-0 mr-1" aria-hidden="true" />
+                    {{ item.name }}
+                  </button>
+                  <ul v-show="open" class="mt-1 px-2">
+                    <li v-for="subItem in item.children" :key="subItem.name">
+                      <button :id="subItem.name"
+                        @click="handleSubItemNavigation(item, subItem);$event.stopPropagation()"
+                        :class="[subItem.current ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'group flex w-full gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']"
+                      >
+                        {{ subItem.name }}
+                      </button>
+                    </li>
+                  </ul>
+                </template>
               </li>
             </ul>
           </li>
