@@ -6,20 +6,19 @@ import UserTable from '../components/UserTable.vue';
 import UserServices from '../services/UserServices';
 const people = ref([]);
 
-async function getAllClerks() {
+async function getAllCustomers() {
   try {
-    const userRole= 4
-    const employees = await UserServices.getUsers(userRole);
+    const employees = await UserServices.getAllCustomers();
     people.value = employees.data;
   } catch (error) {
     console.error(error);
   }
 }
-onMounted(getAllClerks);
+onMounted(getAllCustomers);
 </script>
 <template>
   <div class="flex flex-1">
         <SideNavBar :showEmployeeSubNav = "true"/>
-        <UserTable :people="people" :userRole="`Coustomers`"/>
+        <UserTable :people="people" :userRole="`Customers`" :enableAddUser="true"/>
   </div>
 </template>
