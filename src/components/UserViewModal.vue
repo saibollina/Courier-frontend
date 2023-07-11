@@ -9,7 +9,7 @@ import {
 } from '@headlessui/vue'
 import UserServices from '../services/UserServices';
 
-const props = defineProps(['function','user'])
+const props = defineProps(['function','user','userRole'])
 const isOpen = ref(false)
 const user = ref({
     firstName: '',
@@ -31,8 +31,13 @@ function getEployeeRole(roleId){
   return roles.get(roleId);
 }
 onMounted(async () => {
-   const response =  await UserServices.getUserById(props.user);
-   user.value = response.data;
+    if(props.userRole == "Customers"){
+        const response =  await UserServices.getCustomerById(props.user);
+        user.value = response.data;
+    } else {
+        const response =  await UserServices.getUserById(props.user);
+        user.value = response.data; 
+    }
 })
 
 </script>
