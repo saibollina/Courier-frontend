@@ -170,9 +170,9 @@ function closeSnackBar() {
         </div>
       </div>
     </div>
-    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" />
-    <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId" />
-    <DeleteUserModal v-if="openRemove" :show="openRemove" :function="handleRemove" :user="userId" />
+    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :userRole="props.userRole" />
+    <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId" :userRole="props.userRole" />
+    <DeleteUserModal v-if="openRemove" :show="openRemove" :function="handleRemove" :user="userId" :userRole="props.userRole" />
     <v-dialog persistent v-model="isCreateAccount" width="800">
             <v-card class="rounded-lg elevation-5">
                 <v-card-title class="headline mb-2">Create Account </v-card-title>
