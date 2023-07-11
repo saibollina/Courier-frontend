@@ -5,7 +5,8 @@ import {
   ChartPieIcon,
   HomeIcon,
   UsersIcon,
-  TruckIcon
+  TruckIcon,
+  BriefcaseIcon
 } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import UserServices from "../services/UserServices.js";
@@ -14,7 +15,6 @@ import { defineProps } from "vue";
 const props = defineProps(["showEmployeeSubNav"]);
 
 const router = useRouter();
-console.log("router", router)
 const navigation = ref([
   { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: router.currentRoute.value.path ==='/dashboard' , roles:[1,2,3]},
   { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: router.currentRoute.value.path ==='/placeOrder' , roles:[1]},
@@ -23,7 +23,9 @@ const navigation = ref([
       { name: 'Delivery Person', href: '#', current: router.currentRoute.value.path ==='/deliveryPersons' },
       { name: 'Customers', href: '#', current: router.currentRoute.value.path ==='/customers' },
     ], },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: false, roles:[3]},
+    { name: 'Orders', href: '#', icon: BriefcaseIcon, count:'',current: false, roles:[1,3]},
+  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: false, roles:[3]}
+  
 ])
 
 onMounted(async () => {
@@ -39,27 +41,19 @@ const snackbar = ref({
 const open = ref(props.showEmployeeSubNav);
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 async function handleSignout (){
-  console.log("signing of", loggedInUser)
   await UserServices.logoutUser(loggedInUser)
-    .then((data) => {
-      console.log('signed offf', data);
+    .catch((error) => {
+      console.log(error);
+      localStorage.removeItem("user");
+    }).finally(()=>{
       localStorage.removeItem("user");
       snackbar.value.value = true;
       snackbar.value.color = "green";
       snackbar.value.text = "Logged out successful!";
       router.push({ name: "login" });
     })
-    .catch((error) => {
-      console.log(error);
-      snackbar.value.value = true;
-      snackbar.value.color = "error";
-      snackbar.value.text = error.response.data.message;
-    });
 }
-//TODO
-function handleSettings (){
-  
-}
+
 //TODO
 function handleProfile (){
   
@@ -86,7 +80,6 @@ function closeSnackBar() {
         nav.current = false;
       }
     });
-    console.log('navigations', navigation);
     router.push({ name: subItem.name.toLowerCase()})
 
   }
@@ -167,10 +160,7 @@ function handleDisclosure(){
                         <a @click="handleProfile" :class="[active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800','block px-4 py-2 text-sm text-gray-700 font-semibold']">Your
                           Profile</a>
                         </MenuItem>
-                        <MenuItem v-slot="{ active }">
-                        <a @click="handleSettings"
-                          :class="[active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'block px-4 py-2 text-sm text-gray-700 font-semibold']">Settings</a>
-                        </MenuItem>
+      
                         <MenuItem v-slot="{ active }">
                         <a @click="handleSignout" :class="[active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800', 'block px-4 py-2 text-sm text-gray-700 font-semibold']">Sign
                           out</a>

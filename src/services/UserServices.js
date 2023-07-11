@@ -11,6 +11,10 @@ export default {
   addUser(user) {
     return apiClient.post("users", user);
   },
+  addCustomer(user){
+    console.log('customer', user)
+    return apiClient.post("customers", user);
+  },
   updateUser(user) {
     return apiClient.put(`users/${user.id}`, user);
   },
@@ -33,10 +37,16 @@ export default {
   getUserByEmail(email){
     return apiClient.get(`users/email/${email}`)
   },
+  getCustomerByEmail(email){
+    return apiClient.get(`customers/email/${email}`)
+  },
   getUserById(userId){
     return apiClient.get(`users/${userId}`)
   },
   deleteUserById(userId){
     return apiClient.delete(`users/${userId}`)
+  },
+  getAllCustomers(){
+    return apiClient.get("customers")
   }
 };
