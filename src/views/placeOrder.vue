@@ -16,18 +16,22 @@ const cost = ref(
         totalAmount: 0
     })
 // const createUser = ref(false);
-const coustomer = ref({
+const customer = ref({
     email: '',
     firstName: '',
     lastName: '',
     id: ''
 });
 const order = ref({
-    coustomerID: '',
+    customerID: '',
     orderedBy: '',
     dropLocation: '',
     pickupLocation: '',
-    cost: ''
+    cost: '',
+    receiverLastName:'',
+    receiverPhoneNumber: '',
+    receiverFirstName: '',
+    parcelName: ''
 })
 const noUserFound = ref(true)
 const fetUserClicked = ref(false)
@@ -45,12 +49,12 @@ async function handleEstimateCost() {
     cost.value={subtotal,taxedAmount,totalAmount: subtotal+taxedAmount}
 }
 
-async function fetUser() {
+async function fetchUser() {
     try {
         fetUserClicked.value = true;
-        const user = await UserServices.getUserByEmail(coustomer.value.email);
-        coustomer.value = user.data;
-        console.log('coustmer', coustomer.value)
+        const user = await UserServices.getCustomerByEmail(customer.value.email);
+        customer.value = user.data;
+        console.log('coustmer', customer.value)
         noUserFound.value = false;
     } catch (error) {
         if (error.response.status === 404) {
@@ -79,12 +83,12 @@ function addUser() {
 }
 
 async function createAccount() {
-    await UserServices.addUser(user.value)
+    await UserServices.addCustomer(user.value)
         .then(() => {
             snackbar.value.value = true;
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
-            router.push({ name: "login" });
+            // router.push({ name: "login" });
         })
         .catch((error) => {
             console.log(error);
@@ -102,14 +106,30 @@ function closeSnackBar() {
 const loggedInUser = JSON.parse(localStorage.getItem("user"));
 async function placeOrder() {
     const orderDetails = {
-        coustomerID: coustomer.value.id,
+        customerID: customer.value.id,
         orderedBy: loggedInUser.id,
         cost: cost.value.totalAmount,
         pickupLocation: order.value.pickupLocation,
         dropLocation: order.value.dropLocation,
-        status: 'Order-placed'
+        status: 'Order-placed',
+        receiverPhoneNumber: order.value.receiverPhoneNumber,
+        receiverLastName:order.value.receiverLastName,
+        receiverFirstName: order.value.receiverFirstName,
+        parcelName: order.value.parcelName
     }
-    await OrderServices.placeOrder(orderDetails);
+    try {
+        await OrderServices.placeOrder(orderDetails);
+        snackbar.value.value = true;
+            snackbar.value.color = "green";
+            snackbar.value.text = "Order placed successfully!";
+            noUserFound.value = false;
+    } catch (error) {
+
+        snackbar.value.value = true;
+            snackbar.value.color = "error";
+            snackbar.value.text = error.response.data.message;
+    }
+    
 }
 
 onMounted(async () => {
@@ -135,13 +155,13 @@ onMounted(async () => {
                                     <label for="email-address" class="block text-sm font-medium text-gray-700">Email
                                         address</label>
                                     <div class="mt-1">
-                                        <input type="email" v-model="coustomer.email" :required="true" id="email-address"
+                                        <input type="email" v-model="customer.email" :required="true" id="email-address"
                                             name="email-address" autocomplete="email"
                                             class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                     </div>
                                     <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
                                         <div class="mt-4 sm:mt-0">
-                                            <button type="button" @click="fetUser"
+                                            <button type="button" @click="fetchUser"
                                                 class="block rounded-md bg-[#80162B] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#80162B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-[#80162B]">Fetch
                                                 user</button>
                                         </div>
@@ -163,7 +183,7 @@ onMounted(async () => {
                                             name</label>
                                         <div class="mt-1">
                                             <input type="text" id="first-name" name="first-name" autocomplete="given-name"
-                                                :value="coustomer.firstName" :disabled="true"
+                                                :value="customer.firstName" :disabled="true"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -173,7 +193,7 @@ onMounted(async () => {
                                             name</label>
                                         <div class="mt-1">
                                             <input type="text" id="last-name" name="last-name" autocomplete="family-name"
-                                                :value="coustomer.lastName" :disabled="true"
+                                                :value="customer.lastName" :disabled="true"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -189,6 +209,7 @@ onMounted(async () => {
                                             name</label>
                                         <div class="mt-1">
                                             <input type="text" id="first-name" name="first-name" autocomplete="given-name"
+                                                v-model="order.receiverFirstName"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -198,6 +219,7 @@ onMounted(async () => {
                                             name</label>
                                         <div class="mt-1">
                                             <input type="text" id="last-name" name="last-name" autocomplete="family-name"
+                                                v-model="order.receiverLastName"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -213,6 +235,7 @@ onMounted(async () => {
                                         <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
                                         <div class="mt-1">
                                             <input type="text" name="phone" id="phone" autocomplete="tel"
+                                                v-model="order.receiverPhoneNumber"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -234,6 +257,7 @@ onMounted(async () => {
                                                         class="block text-sm font-medium text-gray-700">Product Name</label>
                                                     <div class="mt-1">
                                                         <input type="text" id="productName" name="productName"
+                                                            v-model="order.parcelName"
                                                             placeholder="eg: parcel" autocomplete="given-name"
                                                             class="block w-full rounded-md border-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                                     </div>
@@ -292,7 +316,7 @@ onMounted(async () => {
 
                     <v-text-field v-model="user.email" label="Email" required></v-text-field>
 
-                    <v-text-field v-model="user.password" label="Password" required></v-text-field>
+                    <!-- <v-text-field v-model="user.password" label="Password" required></v-text-field> -->
                     <label for="gender">Gender:</label>
                     <v-radio-group v-model="user.gender" inline>
                         <v-radio label="Male" value="male"></v-radio>

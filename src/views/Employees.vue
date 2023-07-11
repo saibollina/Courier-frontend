@@ -20,6 +20,6 @@ onMounted(getAllEMployes);
 <template>
   <div class="flex flex-1">
         <SideNavBar :showEmployeeSubNav = "true"/>
-        <UserTable :people="people"/>
+        <UserTable :people="people" :enableAddUser="false"/>
   </div>
 </template>
