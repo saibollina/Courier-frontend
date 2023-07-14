@@ -9,7 +9,7 @@ import {
 } from '@headlessui/vue'
 import UserServices from '../services/UserServices';
 
-const props = defineProps(['function', 'user'])
+const props = defineProps(['function', 'user','userRole','refetchUsers'])
 const isOpen = ref(false);
 const updateEnable = ref(true);
 const user = ref({
@@ -38,7 +38,7 @@ function getEployeeRole(roleId) {
     return roles.get(roleId);
 }
 function isUserUpdated(updatedUser, originalUser) {
-    console.log(updatedUser,originalUser)
+    
     if (updatedUser.firstName !== originalUser.firstName)
         return true;
     if (updatedUser.lastName !== originalUser.lastName)
@@ -62,9 +62,14 @@ async function updateUser() {
     const isupdated = isUserUpdated(updatedUser, originalUser)
     try {
         if (isupdated) {
-            await UserServices.updateUser(updatedUser);
+            if(props.userRole !=='Customers'){
+                await UserServices.updateUser(updatedUser);
+            }else{
+                await UserServices.updateCustomer(updatedUser);
+            }
             updateEnable.value = false
             setSnackBar(true,'User updated!','green')
+            props.refetchUsers() 
         } else {
             setSnackBar(true,'No change in user data','error')
         }
@@ -75,9 +80,17 @@ async function updateUser() {
 
 }
 onMounted(async () => {
-    const response = await UserServices.getUserById(props.user);
-    user.value = {...response.data};
-    originalUser = {...response.data};
+    
+    if(props.userRole !=='Customers'){
+        const response = await UserServices.getUserById(props.user);
+        user.value = {...response.data};
+        originalUser = {...response.data};
+    }else{
+        const response = await UserServices.getCustomerById(props.user);
+        user.value = {...response.data};
+        originalUser = {...response.data};
+    }
+    
 })
 function closeSnackBar() {
     snackbar.value.value = false;

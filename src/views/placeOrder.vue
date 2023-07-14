@@ -25,8 +25,14 @@ const customer = ref({
 const order = ref({
     customerID: '',
     orderedBy: '',
-    dropLocation: '',
-    pickupLocation: '',
+    dropLocation: {
+        id: '',
+        label: ''
+    },
+    pickupLocation: {
+        id: '',
+        label: ''
+    },
     cost: '',
     receiverLastName:'',
     receiverPhoneNumber: '',
@@ -40,8 +46,8 @@ const fetUserClicked = ref(false)
 async function handleEstimateCost() {
     
     const orderDetails = {
-        pickupLocation: order.value.pickupLocation,
-        dropLocation: order.value.dropLocation,
+        pickupLocation: order.value.pickupLocation.id,
+        dropLocation: order.value.dropLocation.id,
     }
     const res = await OrderServices.estimateDeliveryCost(orderDetails);
     const subtotal = res.data.cost;
@@ -54,7 +60,7 @@ async function fetchUser() {
         fetUserClicked.value = true;
         const user = await UserServices.getCustomerByEmail(customer.value.email);
         customer.value = user.data;
-        console.log('coustmer', customer.value)
+        
         noUserFound.value = false;
     } catch (error) {
         if (error.response.status === 404) {
@@ -109,8 +115,8 @@ async function placeOrder() {
         customerID: customer.value.id,
         orderedBy: loggedInUser.id,
         cost: cost.value.totalAmount,
-        pickupLocation: order.value.pickupLocation,
-        dropLocation: order.value.dropLocation,
+        pickupLocation: order.value.pickupLocation.id,
+        dropLocation: order.value.dropLocation.id,
         status: 'Order-placed',
         receiverPhoneNumber: order.value.receiverPhoneNumber,
         receiverLastName:order.value.receiverLastName,
@@ -134,7 +140,10 @@ async function placeOrder() {
 
 onMounted(async () => {
     const response = await LocationServices.getLocations();
-    locations.value = response.data.locations;
+    locations.value = response.data.locations.map((value)=>({
+        id:value,
+        label: `${value[0]} Avenue ${value[1]} Street`
+    }));
 })
 </script>
 <template>
@@ -316,7 +325,6 @@ onMounted(async () => {
 
                     <v-text-field v-model="user.email" label="Email" required></v-text-field>
 
-                    <!-- <v-text-field v-model="user.password" label="Password" required></v-text-field> -->
                     <label for="gender">Gender:</label>
                     <v-radio-group v-model="user.gender" inline>
                         <v-radio label="Male" value="male"></v-radio>

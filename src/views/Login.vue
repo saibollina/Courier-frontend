@@ -34,6 +34,7 @@ async function createAccount() {
       snackbar.value.color = "green";
       snackbar.value.text = "Account created successfully!";
       router.push({ name: "login" });
+      isCreateAccount.value = false;
     })
     .catch((error) => {
       console.log(error);
@@ -44,7 +45,7 @@ async function createAccount() {
 }
 
 async function login() {
-  console.log("heress", user.value);
+  
   await UserServices.loginUser(user)
     .then((data) => {
       window.localStorage.setItem("user", JSON.stringify(data.data));
