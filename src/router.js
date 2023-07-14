@@ -47,6 +47,11 @@ const router = createRouter({
       path:"/ordersPlaced",
       name: "orders",
       component: ()=> import("./views/TrackOrder.vue"),
+    },
+    {
+      path:"/myOrders",
+      name: "my orders",
+      component: ()=> import("./views/MyOrders.vue"),
     }
   ],
 });

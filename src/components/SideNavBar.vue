@@ -6,7 +6,8 @@ import {
   HomeIcon,
   UsersIcon,
   TruckIcon,
-  BriefcaseIcon
+  BriefcaseIcon,
+  ClipboardDocumentListIcon
 } from '@heroicons/vue/24/outline'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import UserServices from "../services/UserServices.js";
@@ -23,8 +24,9 @@ const navigation = ref([
       { name: 'Delivery Person', href: '#', current: router.currentRoute.value.path ==='/deliveryPersons' },
       { name: 'Customers', href: '#', current: router.currentRoute.value.path ==='/customers' },
     ], },
-    { name: 'Orders', href: '#', icon: BriefcaseIcon, count:'',current: false, roles:[1,3]},
-  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: false, roles:[3]}
+    { name: 'Orders', href: '#', icon: BriefcaseIcon, count:'',current: router.currentRoute.value.path ==='/ordersPlaced', roles:[1,3]},
+    { name: 'My orders', href: '#', icon: ClipboardDocumentListIcon, count:'',current: router.currentRoute.value.path ==='/myOrders', roles:[1,2]},
+  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: router.currentRoute.value.path ==='/reports', roles:[3]}
   
 ])
 
@@ -71,7 +73,7 @@ function closeSnackBar() {
   }
 
   function handleSubItemNavigation(item, subItem){
-    console.log({item, subItem})
+    
     navigation.value.forEach((nav) => {
       if(nav === item){
         nav.children.forEach((subNav)=>{subNav.current = (subNav === subItem)});
@@ -85,9 +87,9 @@ function closeSnackBar() {
   }
 
 function handleDisclosure(){
-  console.log("handleDisclosure", open.value)
+  
   open.value = !open.value
-  console.log("after handleDisclosure", open.value)
+  
 }
 </script>
 

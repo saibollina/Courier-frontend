@@ -20,6 +20,6 @@ onMounted(getAllClerks);
 <template>
   <div class="flex flex-1">
         <SideNavBar :showEmployeeSubNav = "true"/>
-        <UserTable :people="people" :userRole="`Clerks`" :enableAddUser="true"/>
+        <UserTable :people="people" :userRole="`Clerks`" :refetchUsers="getAllClerks" :enableAddUser="true"/>
   </div>
 </template>

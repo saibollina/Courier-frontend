@@ -5,21 +5,16 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline';
+import UserServices from '../services/UserServices';
+import OrderEditModal from '../components/OrderEditModal.vue';
+import OrderViewModal from '../components/OrderViewModal.vue';
 
 const openView = ref(false)
 const openEdit = ref(false)
 const openRemove = ref(false)
 const orderId = ref('')
-const props = defineProps(["orders"]);
-function getEployeeRole(roleId){
-  const roles = new Map([
-    [1, 'Clerk'],
-    [2, 'Delivery Person'],
-    [3, 'Admin'],
-    [4,'Customer']
-  ]);
-  return roles.get(roleId);
-}
+const props = defineProps(["orders","enableEditActions"]);
+
 function handleView(orderid){
     orderId.value= orderid
     openView.value = !openView.value
@@ -60,7 +55,7 @@ function handleRemove(orderid){
                 <tbody class="divide-y divide-gray-200 bg-white">
                   <tr v-for="order in orders" :key="order.id">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ order.id }}</td>
-                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.orderedByCustomer.OrderedBy  }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.orderedByCustomer.name  }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.status }}</td>
                     <td class="flex flex-1 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 
@@ -71,13 +66,13 @@ function handleRemove(orderid){
                             <EyeIcon  class="h-5 w-5" aria-hidden="true" />
                         </button>
 
-                        <button type="button"
+                        <button v-show="enableEditActions" type="button"
                             class="mx-0.5 flex items-center justify-center  hover:text-gray-500"
                             @click="handleEdit(order.id)">
                             <span class="sr-only">Edit</span>
                             <PencilSquareIcon class="h-5 w-5" aria-hidden="true" />
                         </button>
-                        <button type="button" class="mx-0.5 flex items-center justify-center  hover:text-gray-500"
+                        <button v-show="enableEditActions" type="button" class="mx-0.5 flex items-center justify-center  hover:text-gray-500"
                             @click="handleRemove(order.id)">
                             <span class="sr-only">Remove</span>
                             <TrashIcon class="h-5 w-5" aria-hidden="true" />
@@ -90,7 +85,7 @@ function handleRemove(orderid){
           </div>
         </div>
       </div>
-        <!-- <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId"/> 
-        <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId"/> -->
+        <OrderViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :orderId="orderId"/> 
+        <OrderEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId" :orderId="orderId"/>
     </div>
 </template>

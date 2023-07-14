@@ -31,7 +31,7 @@ const user = ref({
   password: ''
 })
 const isCreateAccount = ref(false);
-const props = defineProps(["people", "userRole","enableAddUser"]);
+const props = defineProps(["people", "userRole","enableAddUser","refetchUsers"]);
 function getEployeeRole(roleId) {
   const roles = new Map([
     [1, 'Clerks'],
@@ -73,10 +73,12 @@ function closeCreateAccount() {
 async function createAccount() {
   if(getEployeeRoleId(props.userRole) !==4){
     await UserServices.addUser(user.value)
-        .then(() => {
+        .then((data) => {
+          
             snackbar.value.value = true;
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
+            isCreateAccount.value = false;
             // router.push({ name: "login" });
         })
         .catch((error) => {
@@ -88,10 +90,12 @@ async function createAccount() {
   }
   else{
     await UserServices.addCustomer(user.value)
-        .then(() => {
+        .then((data) => {
+          
             snackbar.value.value = true;
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
+            isCreateAccount.value = false;
             // router.push({ name: "login" });
         })
         .catch((error) => {
@@ -101,6 +105,7 @@ async function createAccount() {
             snackbar.value.text = error.response.data.message;
         });
   }
+  props.refetchUsers()
 }
 
 function closeSnackBar() {
@@ -170,9 +175,9 @@ function closeSnackBar() {
         </div>
       </div>
     </div>
-    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" />
-    <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId" />
-    <DeleteUserModal v-if="openRemove" :show="openRemove" :function="handleRemove" :user="userId" />
+    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :userRole="props.userRole" />
+    <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :refetchUsers="props.refetchUsers" :user="userId" :userRole="props.userRole" />
+    <DeleteUserModal v-if="openRemove" :show="openRemove" :function="handleRemove"  :refetchUsers="props.refetchUsers" :user="userId"  :userRole="props.userRole"/>
     <v-dialog persistent v-model="isCreateAccount" width="800">
             <v-card class="rounded-lg elevation-5">
                 <v-card-title class="headline mb-2">Create Account </v-card-title>

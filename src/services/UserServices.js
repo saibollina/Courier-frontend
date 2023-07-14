@@ -18,8 +18,11 @@ export default {
   updateUser(user) {
     return apiClient.put(`users/${user.id}`, user);
   },
+  updateCustomer(user) {
+    return apiClient.put(`customers/${user.id}`, user);
+  },
   loginUser(user) {
-    console.log(user);
+    
     return apiClient.post("login", user.value, {
       headers: {
         Accept: "application/json",
@@ -43,8 +46,14 @@ export default {
   getUserById(userId){
     return apiClient.get(`users/${userId}`)
   },
+  getCustomerById(userId){
+    return apiClient.get(`customers/${userId}`)
+  },
   deleteUserById(userId){
     return apiClient.delete(`users/${userId}`)
+  },
+  deleteCustomerById(userId){
+    return apiClient.delete(`customers/${userId}`)
   },
   getAllCustomers(){
     return apiClient.get("customers")

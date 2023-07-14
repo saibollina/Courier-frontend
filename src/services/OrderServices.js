@@ -12,5 +12,15 @@ export default {
     },
     getAllOrders(){
         return apiClient.get('orders')
+    },
+    getAllOrdersPlacedByClerk(userId){
+        return apiClient.get(`orders/orderedBy/${userId}`)
+    },
+    getOrderDetailsById(orderId){
+        return apiClient.get(`orders/${orderId}`)
+    },
+    updateOrder(order){
+        
+        return apiClient.put(`orders/${order.id}`, order)
     }
 };

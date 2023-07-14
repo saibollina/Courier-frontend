@@ -4,7 +4,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { ExclamationTriangleIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import UserServices from '../services/UserServices';
 
-const props = defineProps(['function','user'])
+const props = defineProps(['function','user','userRole','refetchUsers'])
 const open = ref(false)
 const snackbar = ref({
     value: false,
@@ -22,11 +22,20 @@ function setSnackBar(value, text, color){
 }
 async function handleDeactivate(){
     try {
-        const response = await UserServices.deleteUserById(props.user)
+      if(props.userRole !=='Customers'){
+         const response = await UserServices.deleteUserById(props.user)
+        
         setSnackBar(true,response.data.message,'green');
         closeModal()
+      }else{
+         const response =  await UserServices.deleteCustomerById(props.user);
+      
+        setSnackBar(true,response.data.message,'green');
+        closeModal()
+      }
+      props.refetchUsers()
     } catch (error) {
-        console.log('error');
+        console.log('error', error);
         setSnackBar(true,error.response.data.message,'error')
     }
 }
