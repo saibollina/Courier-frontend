@@ -17,17 +17,20 @@ const props = defineProps(["showEmployeeSubNav"]);
 
 const router = useRouter();
 const navigation = ref([
-  { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: router.currentRoute.value.path ==='/dashboard' , roles:[1,2,3]},
-  { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: router.currentRoute.value.path ==='/placeOrder' , roles:[1]},
-  { name: 'Employees', href: '#', icon: UsersIcon, count:'',current: router.currentRoute.value.path ==='/employees', roles: [3],children: [
-      { name: 'Clerks', href: '#', current: router.currentRoute.value.path ==='/clerks' },
-      { name: 'Delivery Person', href: '#', current: router.currentRoute.value.path ==='/deliveryPersons' },
-      { name: 'Customers', href: '#', current: router.currentRoute.value.path ==='/customers' },
-    ], },
-    { name: 'Orders', href: '#', icon: BriefcaseIcon, count:'',current: router.currentRoute.value.path ==='/ordersPlaced', roles:[1,3]},
-    { name: 'My orders', href: '#', icon: ClipboardDocumentListIcon, count:'',current: router.currentRoute.value.path ==='/myOrders', roles:[1,2]},
-  { name: 'Reports', href: '#', icon: ChartPieIcon, count:'',current: router.currentRoute.value.path ==='/reports', roles:[3]}
-  
+  { name: 'Dashboard', href: '', icon: HomeIcon, count: '', current: router.currentRoute.value.path === '/dashboard', roles: [1, 2, 3] },
+  { name: 'Place order', href: '#', icon: TruckIcon, count: '', current: router.currentRoute.value.path === '/placeOrder', roles: [1] },
+  {
+    name: 'Employees', href: '#', icon: UsersIcon, count: '', current: router.currentRoute.value.path === '/employees', roles: [3], children: [
+      { name: 'Clerks', href: '#', current: router.currentRoute.value.path === '/clerks' },
+      { name: 'Delivery Person', href: '#', current: router.currentRoute.value.path === '/deliveryPersons' },
+      { name: 'Customers', href: '#', current: router.currentRoute.value.path === '/customers' },
+    ],
+  },
+  { name: 'Orders', href: '#', icon: BriefcaseIcon, count: '', current: router.currentRoute.value.path === '/ordersPlaced', roles: [1, 3] },
+  { name: 'My orders', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/myOrders', roles: [1, 2] },
+  { name: 'Assigned order', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/assignedOrder', roles: [2] },
+  { name: 'Reports', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/reports', roles: [3] }
+
 ])
 
 onMounted(async () => {

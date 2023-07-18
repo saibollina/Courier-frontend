@@ -11,11 +11,9 @@ import 'vue-select/dist/vue-select.css';
 const locations = ref([])
 const cost = ref(
     {
-        subtotal: 0,
-        taxedAmount: 0,
-        totalAmount: 0
+        totalAmount: 0,
+        estimatedTime: 0,
     })
-// const createUser = ref(false);
 const customer = ref({
     email: '',
     firstName: '',
@@ -50,9 +48,7 @@ async function handleEstimateCost() {
         dropLocation: order.value.dropLocation.id,
     }
     const res = await OrderServices.estimateDeliveryCost(orderDetails);
-    const subtotal = res.data.cost;
-    const taxedAmount= subtotal*0.05;
-    cost.value={subtotal,taxedAmount,totalAmount: subtotal+taxedAmount}
+    cost.value = res.data;
 }
 
 async function fetchUser() {
@@ -290,13 +286,13 @@ onMounted(async () => {
                                     </div>
                                 </div>
                                 <dl class="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
+                                    <!-- <div class="flex items-center justify-between">
+                                        <dt class="text-sm">Total</dt>
+                                        <dd class="text-sm font-medium text-gray-900">${{ cost.totalAmount }}</dd>
+                                    </div> -->
                                     <div class="flex items-center justify-between">
-                                        <dt class="text-sm">Subtotal</dt>
-                                        <dd class="text-sm font-medium text-gray-900">${{ cost.subtotal }}</dd>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <dt class="text-sm">Taxes</dt>
-                                        <dd class="text-sm font-medium text-gray-900">${{ cost.taxedAmount }}</dd>
+                                        <dt class="text-sm">Estimated time</dt>
+                                        <dd class="text-sm font-medium text-gray-900">{{ cost.estimatedTime }} mins</dd>
                                     </div>
                                     <div class="flex items-center justify-between border-t border-gray-200 pt-6">
                                         <dt class="text-base font-medium">Total</dt>
