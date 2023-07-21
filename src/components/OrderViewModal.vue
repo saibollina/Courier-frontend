@@ -7,8 +7,6 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
-import UserServices from '../services/UserServices';
-import vSelect from 'vue-select'
 import OrderServices from '../services/OrderServices';
 
 const props = defineProps(['function', 'user','userRole','orderId'])
@@ -23,7 +21,8 @@ const order = ref({
         name: '',
         firstName: '',
         lastName: '',
-        email:''
+        email:'',
+        phoneNumber:'',
     },
     orderAssignedTo:{
         name: '',
@@ -36,7 +35,9 @@ const order = ref({
     receiverLastName:'',
     receiverPhoneNumber:'' ,
     status:' ',
-    pickedUpBy:''
+    pickedUpBy:'',
+    dropLocation:'',
+    pickupLocation:''
 })
 const deliveryPersons = ref([
     {
@@ -107,6 +108,7 @@ onMounted(async () => {
     const response = await OrderServices.getOrderDetailsById(props.orderId);
     order.value = {...response.data};
     originalOrder = {...response.data};
+    console.log('orders', order.value)
 })
 function closeSnackBar() {
     snackbar.value.value = false;
@@ -158,11 +160,21 @@ function closeSnackBar() {
                                             </div>
                                         </div>
                                         <div class="sm:col-span-2">
-                                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                            <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
                                             <div class="mt-1">
-                                                <input type="text" name="email" id="email" autocomplete="email"
+                                                <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber"
                                                     
-                                                    :value="order.orderedByCustomer.email"
+                                                    :value="order.orderedByCustomer.phoneNumber"
+                                                    :disabled="true"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label for="pickupLocation" class="block text-sm font-medium text-gray-700">Pickup Location</label>
+                                            <div class="mt-1">
+                                                <input type="text" name="pickupLocation" id="pickupLocation"
+                                                    
+                                                    :value="order.pickupLocation"
                                                     :disabled="true"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>
@@ -199,6 +211,15 @@ function closeSnackBar() {
                                             <div class="mt-1">
                                                 <input type="text" name="receiverPhoneNumber" id="receiverPhoneNumber" autocomplete="email"
                                                     v-model="order.receiverPhoneNumber"
+                                                    :disabled="true"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label for="dropLocation" class="block text-sm font-medium text-gray-700">Drop Location</label>
+                                            <div class="mt-1">
+                                                <input type="text" name="dropLocation" id="dropLocation"
+                                                    :value="order.dropLocation"
                                                     :disabled="true"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>

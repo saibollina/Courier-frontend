@@ -23,7 +23,8 @@ const order = ref({
         name: '',
         firstName: '',
         lastName: '',
-        email:''
+        email:'',
+        phoneNumber:'',
     },
     orderAssignedTo:{
         name: '',
@@ -168,11 +169,21 @@ async function fetchActiveDeliveryPersons(){
                                             </div>
                                         </div>
                                         <div class="sm:col-span-2">
-                                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                                            <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
                                             <div class="mt-1">
-                                                <input type="text" name="email" id="email" autocomplete="email"
+                                                <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber"
                                                     
-                                                    :value="order.orderedByCustomer.email"
+                                                    :value="order.orderedByCustomer.phoneNumber"
+                                                    :disabled="true"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                            </div>
+                                        </div>
+                                        <div class="sm:col-span-2">
+                                            <label for="pickupLocation" class="block text-sm font-medium text-gray-700">Pickup Location</label>
+                                            <div class="mt-1">
+                                                <input type="text" name="pickupLocation" id="pickupLocation"
+                                                    
+                                                    :value="order.pickupLocation"
                                                     :disabled="true"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>
@@ -210,7 +221,18 @@ async function fetchActiveDeliveryPersons(){
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>
                                         </div>
+                                        <div class="sm:col-span-2">
+                                            <label for="dropLocation" class="block text-sm font-medium text-gray-700">Drop Location</label>
+                                            <div class="mt-1">
+                                                <input type="text" name="dropLocation" id="dropLocation"
+                                                    
+                                                    :value="order.dropLocation"
+                                                    :disabled="true"
+                                                    class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                            </div>
+                                        </div>
                                     </div>
+                                    
                                     <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
                                         <button type="submit" :disabled="!updateEnable"
                                             :class="[updateEnable ? 'bg-[#80162B]' : 'bg-[#80162B] opacity-50', 'w-full rounded-md border border-transparent px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-[#80162B] focus:outline-none focus:bg-[#80162B] focus:ring-offset-2 focus:ring-offset-gray-50']">Update
