@@ -50,10 +50,13 @@ async function getAssignedLiveOrder (){
   try {
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     const response = await OrderServices.getAllAssignedOrders(loggedInUser.id);
-    order.value = response.data.filter(order => order.status === "DP-assigned" || order.status=="Picked-up")[0];
-    readyToPickup.value = order.value.status === 'DP-assigned'
-    delivered.value = order.value.status === 'Delivered'
-    console.log('Assigned orders==>', order.value)
+    const newOrder = response.data.filter(order => order.status === "DP-assigned" || order.status=="Picked-up")[0];
+    if(newOrder){
+      order.value = newOrder;
+      readyToPickup.value = order.value.status === 'DP-assigned'
+      delivered.value = order.value.status === 'Delivered'
+      console.log('Assigned orders==>', order.value)
+    }
   } catch (error) {
     console.error(error);
   }
@@ -78,9 +81,6 @@ const updateOrder = async (status) => {
   } catch (error) {
     console.log('error');
   }
-}
-const getFullAddress = (value)=>{
-  return `${value[0]} Avenue ${value[1]} Street`
 }
 </script>
 <template >
@@ -118,7 +118,7 @@ const getFullAddress = (value)=>{
         <div class="sm:col-span-2">
           <label for="pickupLocation" class="block text-sm font-medium text-gray-700">Pickup Location</label>
           <div class="mt-1">
-            <input type="text" name="pickupLocation" id="pickupLocation" autocomplete="pickupLocation" :value="getFullAddress(order.pickupLocation)"
+            <input type="text" name="pickupLocation" id="pickupLocation" autocomplete="pickupLocation" :value="order.pickupLocation"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
@@ -159,7 +159,7 @@ const getFullAddress = (value)=>{
         <div class="sm:col-span-2">
           <label for="dropLocation" class="block text-sm font-medium text-gray-700">Drop Location</label>
           <div class="mt-1">
-            <input type="text" name="dropLocation" id="dropLocation" autocomplete="dropLocation" :value="getFullAddress(order.dropLocation)"
+            <input type="text" name="dropLocation" id="dropLocation" autocomplete="dropLocation" :value="order.dropLocation"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>

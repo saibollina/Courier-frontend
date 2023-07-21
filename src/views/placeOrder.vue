@@ -46,13 +46,30 @@ const fetUserClicked = ref(false)
 
 //TODO handle actual logic
 async function handleEstimateCost() {
-    
-    const orderDetails = {
-        pickupLocation: order.value.pickupLocation.id,
-        dropLocation: order.value.dropLocation.id,
+    try{
+        const orderDetails = {
+            pickupLocation: order.value.pickupLocation.id,
+            dropLocation: order.value.dropLocation.id,
+        }
+        const res = await OrderServices.estimateDeliveryCost(orderDetails);
+        cost.value = res.data;
+        if(!res.data.estimatedTime) {
+            snackbar.value.value = true;
+            snackbar.value.color = "error";
+            snackbar.value.text = "Cannot find path"; 
+        } else {
+             snackbar.value.value = true;
+            snackbar.value.color = "green";
+            snackbar.value.text = "Details retrieved successfully";
+        }
     }
-    const res = await OrderServices.estimateDeliveryCost(orderDetails);
-    cost.value = res.data;
+    catch(error){
+        console.log(error);
+        snackbar.value.value = true;
+        snackbar.value.color = "error";
+        snackbar.value.text = error.response.data.message; 
+    }
+
 }
 
 async function fetchUser() {
@@ -62,7 +79,11 @@ async function fetchUser() {
         customer.value = user.data;
         
         noUserFound.value = false;
-        order.value.pickupLocation = locations.value.filter((location)=> location.id==customer.value.address)
+        const pickupAddress = locations.value.filter((location)=> location.id==customer.value.address)
+        order.value.pickupLocation = {
+            id: pickupAddress[0].id,
+            label: pickupAddress[0].label
+        }
     } catch (error) {
         if (error.response.status === 404) {
             noUserFound.value = true;
@@ -82,7 +103,8 @@ const user = ref({
     email: "",
     password: "",
     gender: "male",
-    role: "4"
+    role: "4",
+    address:""
 });
 
 function addUser() {
@@ -90,7 +112,7 @@ function addUser() {
 }
 
 async function createAccount() {
-    await UserServices.addCustomer(user.value)
+    await UserServices.addCustomer({...user.value,address:user.value.address.id})
         .then(() => {
             snackbar.value.value = true;
             snackbar.value.color = "green";
@@ -115,8 +137,8 @@ async function placeOrder() {
         customerID: customer.value.id,
         orderedBy: loggedInUser.id,
         cost: cost.value.totalAmount,
-        pickupLocation: order.value.pickupLocation.id,
-        dropLocation: order.value.dropLocation.id,
+        pickupLocation: order.value.pickupLocation.label,
+        dropLocation: order.value.dropLocation.label,
         status: 'Order-placed',
         receiverPhoneNumber: order.value.receiverPhoneNumber,
         receiverLastName:order.value.receiverLastName,
@@ -338,7 +360,10 @@ const getFullAddress = (value)=>{
                     <v-text-field v-model="user.lastName" label="Last Name" required></v-text-field>
 
                     <v-text-field v-model="user.email" label="Email" required></v-text-field>
-
+                <div class="sm:col-span-2" style="margin-bottom:10px;">
+                    <label class="block text-sm font-medium text-gray-700">Address</label>
+                    <v-select :options="locations" v-model="user.address"></v-select>
+                    </div>
                     <label for="gender">Gender:</label>
                     <v-radio-group v-model="user.gender" inline>
                         <v-radio label="Male" value="male"></v-radio>
@@ -348,6 +373,7 @@ const getFullAddress = (value)=>{
                     <v-radio-group v-model="user.role" inline>
                         <v-radio label="Customer" value="4"></v-radio>
                     </v-radio-group>
+
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
