@@ -5,7 +5,6 @@ import {
   PencilSquareIcon,
   TrashIcon
 } from '@heroicons/vue/24/outline';
-import UserServices from '../services/UserServices';
 import OrderEditModal from '../components/OrderEditModal.vue';
 import OrderViewModal from '../components/OrderViewModal.vue';
 
@@ -46,6 +45,8 @@ function handleRemove(orderid){
                     <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">OrderId</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">OrderedBy</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Cost</th>
+                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Estimated Time</th>
                     <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       <span class="sr-only">Edit</span>
                       Actions
@@ -57,6 +58,8 @@ function handleRemove(orderid){
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ order.id }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.orderedByCustomer.name  }}</td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.status }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">$ {{ order.cost }}</td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ order.estimatedDeliveryTime }} mins</td>
                     <td class="flex flex-1 relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 
                         <button type="button"

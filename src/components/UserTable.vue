@@ -7,10 +7,12 @@ import {
 } from '@heroicons/vue/24/outline';
 
 import UserServices from '../services/UserServices.js'
-
+import LocationServices from '../services/LocationServices.js';
 import UserViewModal from '../components/UserViewModal.vue'
 import UserEditModal from './UserEditModal.vue';
 import DeleteUserModal from './DeleteUserModal.vue';
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css';
 
 const openView = ref(false)
 const openEdit = ref(false)
@@ -22,13 +24,18 @@ const snackbar = ref({
     color: "",
     text: "",
 });
-
+const locations = ref([]);
 const user = ref({
   firstName:'',
   lastName:'',
   email: '',
   gender:'',
-  password: ''
+  password: '',
+  addressWithId:{
+    id:'',
+    label: '',
+  },
+  phoneNumber: ''
 })
 const isCreateAccount = ref(false);
 const props = defineProps(["people", "userRole","enableAddUser","refetchUsers"]);
@@ -63,7 +70,14 @@ function handleRemove(userid) {
   userId.value = userid
   openRemove.value = !openRemove.value
 }
-function addUser() {
+async function addUser() {
+  if(getEployeeRoleId(props.userRole) ===4){
+    const response = await LocationServices.getLocations();
+    locations.value = response.data.locations.map((value)=>({
+        id:value,
+        label: `${value[0]} Avenue ${value[1]} Street`
+    }));
+  }
     isCreateAccount.value = !isCreateAccount.value
 }
 function closeCreateAccount() {
@@ -89,7 +103,8 @@ async function createAccount() {
         });
   }
   else{
-    await UserServices.addCustomer(user.value)
+
+    await UserServices.addCustomer({...user.value,address: user.value.addressWithId.id})
         .then((data) => {
           
             snackbar.value.value = true;
@@ -187,8 +202,13 @@ function closeSnackBar() {
                     <v-text-field v-model="user.lastName" label="Last Name" required></v-text-field>
 
                     <v-text-field v-model="user.email" label="Email" required></v-text-field>
+                    <v-text-field v-model="user.phoneNumber" label="Phone Number" required></v-text-field>
 
                     <v-text-field v-if="getEployeeRoleId(props.userRole)!==4" v-model="user.password" label="Password" required></v-text-field>
+                    <div v-if="getEployeeRoleId(props.userRole)===4" class="sm:col-span-2">
+                                        <label class="block text-sm font-medium text-gray-700">Address</label>
+                                        <v-select :options="locations" v-model="user.addressWithId"></v-select>
+                    </div>
                     <label for="gender">Gender:</label>
                     <v-radio-group v-model="user.gender" inline>
                         <v-radio label="Male" value="male"></v-radio>
