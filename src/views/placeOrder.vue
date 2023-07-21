@@ -1,5 +1,6 @@
 <script setup>
 import SideNavBar from "../components/SideNavBar.vue";
+import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
 import { TrashIcon } from '@heroicons/vue/20/solid'
 import UserServices from '../services/UserServices.js';
@@ -8,6 +9,7 @@ import LocationServices from '../services/LocationServices.js';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
 
+const router = useRouter();
 const locations = ref([])
 const cost = ref(
     {
@@ -18,7 +20,8 @@ const customer = ref({
     email: '',
     firstName: '',
     lastName: '',
-    id: ''
+    id: '',
+    address:''
 });
 const order = ref({
     customerID: '',
@@ -35,7 +38,8 @@ const order = ref({
     receiverLastName:'',
     receiverPhoneNumber: '',
     receiverFirstName: '',
-    parcelName: ''
+    parcelName: '',
+    estimateDeliveryCost:''
 })
 const noUserFound = ref(true)
 const fetUserClicked = ref(false)
@@ -58,6 +62,7 @@ async function fetchUser() {
         customer.value = user.data;
         
         noUserFound.value = false;
+        order.value.pickupLocation = locations.value.filter((location)=> location.id==customer.value.address)
     } catch (error) {
         if (error.response.status === 404) {
             noUserFound.value = true;
@@ -90,7 +95,6 @@ async function createAccount() {
             snackbar.value.value = true;
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
-            // router.push({ name: "login" });
         })
         .catch((error) => {
             console.log(error);
@@ -117,7 +121,9 @@ async function placeOrder() {
         receiverPhoneNumber: order.value.receiverPhoneNumber,
         receiverLastName:order.value.receiverLastName,
         receiverFirstName: order.value.receiverFirstName,
-        parcelName: order.value.parcelName
+        parcelName: order.value.parcelName,
+        cost: cost.value.totalAmount,
+        estimatedDeliveryTime: cost.value.estimatedTime,
     }
     try {
         await OrderServices.placeOrder(orderDetails);
@@ -125,6 +131,7 @@ async function placeOrder() {
             snackbar.value.color = "green";
             snackbar.value.text = "Order placed successfully!";
             noUserFound.value = false;
+            router.push({ name: "my orders" })
     } catch (error) {
 
         snackbar.value.value = true;
@@ -141,6 +148,9 @@ onMounted(async () => {
         label: `${value[0]} Avenue ${value[1]} Street`
     }));
 })
+const getFullAddress = (value)=>{
+  return `${value[0]} Avenue ${value[1]} Street`
+}
 </script>
 <template>
     <div class="flex flex-1">
@@ -199,6 +209,14 @@ onMounted(async () => {
                                         <div class="mt-1">
                                             <input type="text" id="last-name" name="last-name" autocomplete="family-name"
                                                 :value="customer.lastName" :disabled="true"
+                                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                                        <div class="mt-1">
+                                            <input type="text" id="address" name="address" autocomplete="address"
+                                                :value="getFullAddress(customer.address)" :disabled="true"
                                                 class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                         </div>
                                     </div>
@@ -291,7 +309,7 @@ onMounted(async () => {
                                         <dd class="text-sm font-medium text-gray-900">${{ cost.totalAmount }}</dd>
                                     </div> -->
                                     <div class="flex items-center justify-between">
-                                        <dt class="text-sm">Estimated time</dt>
+                                        <dt class="text-base font-medium">Estimated time</dt>
                                         <dd class="text-sm font-medium text-gray-900">{{ cost.estimatedTime }} mins</dd>
                                     </div>
                                     <div class="flex items-center justify-between border-t border-gray-200 pt-6">

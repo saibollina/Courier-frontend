@@ -2,6 +2,7 @@
 import SideNavBar from "../components/SideNavBar.vue";
 import { ref, onMounted } from "vue";
 import OrderServices from '../services/OrderServices.js';
+import NoOrdersModal from '../components/NoOrdersModal.vue';
 
 const snackbar = ref({
   value: false,
@@ -22,7 +23,8 @@ const order = ref({
     name: '',
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    phoneNumber: ''
   },
   orderAssignedTo: {
     name: '',
@@ -35,35 +37,50 @@ const order = ref({
   receiverLastName: '',
   receiverPhoneNumber: '',
   status: ' ',
-  pickedUpBy: ''
+  pickedUpBy: '',
+  pickupLocation:'',
+  dropLocation:'',
+  estimatedDeliveryTime: '',
+  pickUpTime:'',
 });
 
 const readyToPickup = ref(true);
 const delivered = ref(false);
-
-onMounted(async () => {
+async function getAssignedLiveOrder (){
   try {
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     const response = await OrderServices.getAllAssignedOrders(loggedInUser.id);
-    order.value = response.data.filter(order => order.status === "DP-assigned")[0];
+    order.value = response.data.filter(order => order.status === "DP-assigned" || order.status=="Picked-up")[0];
     readyToPickup.value = order.value.status === 'DP-assigned'
     delivered.value = order.value.status === 'Delivered'
+    console.log('Assigned orders==>', order.value)
   } catch (error) {
     console.error(error);
   }
-});
+}
+onMounted(getAssignedLiveOrder);
 
 const updateOrder = async (status) => {
   try {
-    await OrderServices.updateOrder({
-      ...order.value,
-      status: status
-    });
+    if(status === "Picked-up"){
+      await OrderServices.updatePickUpTime({
+        ...order.value
+      });
+    }else{
+      await OrderServices.updateDeliveryTime({
+        ...order.value
+      });
+      // await getAssignedLiveOrder();
+    }
+      
     status === "Picked-up" ? readyToPickup.value = false : delivered.value = true
     setSnackBar(true, 'Order updated!', 'green')
   } catch (error) {
     console.log('error');
   }
+}
+const getFullAddress = (value)=>{
+  return `${value[0]} Avenue ${value[1]} Street`
 }
 </script>
 <template >
@@ -91,9 +108,17 @@ const updateOrder = async (status) => {
           </div>
         </div>
         <div class="sm:col-span-2">
-          <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
           <div class="mt-1">
-            <input type="text" name="email" id="email" autocomplete="email" :value="order.orderedByCustomer.email"
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="order.orderedByCustomer.phoneNumber"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="pickupLocation" class="block text-sm font-medium text-gray-700">Pickup Location</label>
+          <div class="mt-1">
+            <input type="text" name="pickupLocation" id="pickupLocation" autocomplete="pickupLocation" :value="getFullAddress(order.pickupLocation)"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
@@ -131,6 +156,22 @@ const updateOrder = async (status) => {
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
         </div>
+        <div class="sm:col-span-2">
+          <label for="dropLocation" class="block text-sm font-medium text-gray-700">Drop Location</label>
+          <div class="mt-1">
+            <input type="text" name="dropLocation" id="dropLocation" autocomplete="dropLocation" :value="getFullAddress(order.dropLocation)"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="estimatedDeliveryTime" class="block text-sm font-medium text-gray-700">Estimated Delivery In</label>
+          <div class="mt-1">
+            <input type="text" name="estimatedDeliveryTime" id="estimatedDeliveryTime" autocomplete="estimatedDeliveryTime" :value="`${order.estimatedDeliveryTime} mins`"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
       </div>
       <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
         <div class="mt-4 sm:mt-0">
@@ -145,7 +186,7 @@ const updateOrder = async (status) => {
       </div>
     </div>
     <div v-if="order.id === ''">
-      <p>No assigned order</p>
+      <NoOrdersModal></NoOrdersModal>
     </div>
   </div>
 </template>

@@ -20,7 +20,12 @@ export default {
         return apiClient.get(`orders/${orderId}`)
     },
     updateOrder(order){
-        
         return apiClient.put(`orders/${order.id}`, order)
+    },
+    updatePickUpTime(order){
+        return apiClient.put(`orders/pickedup/${order.id}`, order)
+    },
+    updateDeliveryTime(order){
+        return apiClient.put(`orders/delivered/${order.id}`, order)
     }
 };
