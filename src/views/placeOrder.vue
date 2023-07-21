@@ -117,6 +117,7 @@ async function createAccount() {
             snackbar.value.value = true;
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
+            isCreateAccount.value = false;
         })
         .catch((error) => {
             console.log(error);
