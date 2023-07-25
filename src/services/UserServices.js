@@ -18,6 +18,10 @@ export default {
   updateUser(user) {
     return apiClient.put(`users/${user.id}`, user);
   },
+  updateUserStatus(user,status) {
+    console.log("status", status)
+    return apiClient.put(`users/updateStatus/${user.id}`, {status});
+  },
   updateCustomer(user) {
     return apiClient.put(`customers/${user.id}`, user);
   },

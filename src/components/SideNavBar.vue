@@ -29,14 +29,18 @@ const navigation = ref([
   { name: 'Orders', href: '#', icon: BriefcaseIcon, count: '', current: router.currentRoute.value.path === '/ordersPlaced', roles: [1, 3] },
   { name: 'My orders', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/myOrders', roles: [1, 2,3] },
   { name: 'Assigned order', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/assignedOrder', roles: [2] },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/reports', roles: [3] }
-
+  { name: 'Reports', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/reports', roles: [3] },
+  { name: 'Profile', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/profile', roles: [] }
 ])
-
+const isUserActive = ref(false)
 onMounted(async () => {
   if (localStorage.getItem("user") === null) {
     router.push({ name: "login" });
   }
+  const loggedInUser = JSON.parse(localStorage.getItem("user"))
+  const res = await UserServices.getUserById(loggedInUser.id)
+  console.log("sdfghnjk,l===>",res.data)
+  isUserActive.value = res.data.active
 });
 const snackbar = ref({
   value: false,
@@ -60,8 +64,11 @@ async function handleSignout (){
 }
 
 //TODO
-function handleProfile (){
-  
+function handleProfileStatus (){
+  console.log("pressedd profile")
+  isUserActive.value = !isUserActive.value
+  // router.push({ name: "profile" })
+  UserServices.updateUserStatus(loggedInUser,isUserActive.value)
 }
 function closeSnackBar() {
   snackbar.value.value = false;
@@ -146,11 +153,11 @@ function handleDisclosure(){
                   <Menu as="div" class="relative ml-4 flex-shrink-0">
                     <div>
                       <MenuButton
-                        class="flex rounded-full bg-gray-800 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                        class="flex rounded-full bg-gray-800 text-sm text-white focus:outline-none ">
                         <span class="sr-only">Open user menu</span>
                         <div
-                          class="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
-                          <span class="font-medium text-gray-600 dark:text-gray-300">{{
+                          :class="[isUserActive ? 'ring-green-400':'ring-red-400','relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 ring-green-400 ring-2']">
+                          <span class="['font-medium text-gray-600 dark:text-gray-300">{{
                             loggedInUser.firstName[0].toUpperCase() }}{{ loggedInUser.lastName[0].toUpperCase() }}</span>
                         </div>
                       </MenuButton>
@@ -162,8 +169,8 @@ function handleDisclosure(){
                       <MenuItems
                         class="absolute left-0 z-10  w-60 custom-menu-transition rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <MenuItem v-slot="{ active }">
-                        <a @click="handleProfile" :class="[active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800','block px-4 py-2 text-sm text-gray-700 font-semibold']">Your
-                          Profile</a>
+                        <a @click="handleProfileStatus" :class="[active ? 'bg-gray-800 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800','block px-4 py-2 text-sm text-gray-700 font-semibold']">
+                        Set Yourself {{ isUserActive ? "offline": "online" }}</a>
                         </MenuItem>
       
                         <MenuItem v-slot="{ active }">

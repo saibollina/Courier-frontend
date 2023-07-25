@@ -50,7 +50,7 @@ async function getAssignedLiveOrder (){
   try {
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     const response = await OrderServices.getAllAssignedOrders(loggedInUser.id);
-    const newOrder = response.data.filter(order => order.status === "DP-assigned" || order.status=="Picked-up")[0];
+    const newOrder = response.data.filter(order => order.status === "DP-assigned" || order.status=="Picked-Up")[0];
     if(newOrder){
       order.value = newOrder;
       readyToPickup.value = order.value.status === 'DP-assigned'
@@ -65,7 +65,7 @@ onMounted(getAssignedLiveOrder);
 
 const updateOrder = async (status) => {
   try {
-    if(status === "Picked-up"){
+    if(status === "Picked-Up"){
       await OrderServices.updatePickUpTime({
         ...order.value
       });
@@ -76,7 +76,7 @@ const updateOrder = async (status) => {
       // await getAssignedLiveOrder();
     }
       
-    status === "Picked-up" ? readyToPickup.value = false : delivered.value = true
+    status === "Picked-Up" ? readyToPickup.value = false : delivered.value = true
     setSnackBar(true, 'Order updated!', 'green')
   } catch (error) {
     console.log('error');
@@ -175,7 +175,7 @@ const updateOrder = async (status) => {
       </div>
       <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
         <div class="mt-4 sm:mt-0">
-          <button type="button" @click="updateOrder('Picked-up')" :disabled="!readyToPickup"
+          <button type="button" @click="updateOrder('Picked-Up')" :disabled="!readyToPickup"
             :class="[readyToPickup ? 'bg-[#80162B]' : 'bg-[#80162B] opacity-50', 'block rounded-md bg-[#80162B] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-[#80162B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-[#80162B]']">Pick
             this up</button>
         </div>
