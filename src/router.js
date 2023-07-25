@@ -57,6 +57,11 @@ const router = createRouter({
       path:"/assignedOrder",
       name: "assigned order",
       component: ()=> import("./views/AssignedOrder.vue"),
+    },
+    {
+      path:"/profile",
+      name: "profile",
+      component: ()=> import("./views/Profile.vue"),
     }
   ],
 });
