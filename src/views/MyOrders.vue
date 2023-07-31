@@ -13,7 +13,7 @@ async function getAllAssignedOrders(userId) {
     const response = await OrderServices.getAllAssignedOrders(userId);
     
     orders.value = response.data;
-    console.log("orders", orders.value)
+
   } catch (error) {
     console.error(error);
   }
@@ -27,12 +27,22 @@ async function getAllOrdersPlacedByClerk(userId) {
     console.error(error);
   }
 }
+async function reftechOrders(){
+  const loggedInUser = JSON.parse(localStorage.getItem("user"))
+    enableEditAction.value = loggedInUser.role !==2
+    if (loggedInUser.role === 2) {
+
+        await getAllAssignedOrders(loggedInUser.id)
+    } else {
+        await getAllOrdersPlacedByClerk(loggedInUser.id)
+    }
+}
 const enableEditAction = ref(false)
 onMounted(async()=>{
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     enableEditAction.value = loggedInUser.role !==2
     if (loggedInUser.role === 2) {
-        console.log('userss', loggedInUser, enableEditAction.value)
+
         await getAllAssignedOrders(loggedInUser.id)
     } else {
         await getAllOrdersPlacedByClerk(loggedInUser.id)
@@ -43,6 +53,6 @@ onMounted(async()=>{
 <template>
     <div class="flex flex-1">
         <SideNavBar />
-        <OrdersTable :orders="orders" :enableEditActions="enableEditAction"></OrdersTable>
+        <OrdersTable :orders="orders" :enableEditActions="enableEditAction" :reftechOrders="reftechOrders"></OrdersTable>
     </div>
 </template>

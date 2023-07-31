@@ -17,7 +17,6 @@ async function getAllOrders() {
     const response = await OrderServices.getAllOrders();
     
     orders.value = response.data;
-    console.log("track orders", orders.value)
   } catch (error) {
     console.error(error);
   }
@@ -26,11 +25,11 @@ const enableEditAction = ref(false)
 onMounted(async ()=>{
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     enableEditAction.value = loggedInUser.role !==2
-    await getAllOrders(loggedInUser.id)});
+    await getAllOrders()});
 </script>
 <template>
     <div class="flex flex-1">
         <SideNavBar />
-        <OrdersTable :orders="orders" :enableEditActions="enableEditAction" ></OrdersTable>
+        <OrdersTable :orders="orders" :reftechOrders="getAllOrders" :enableEditActions="enableEditAction" ></OrdersTable>
     </div>
 </template>
