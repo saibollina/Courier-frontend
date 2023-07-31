@@ -27,5 +27,8 @@ export default {
     },
     updateDeliveryTime(order){
         return apiClient.put(`orders/delivered/${order.id}`, order)
+    },
+    deleteOrder(orderId){
+        return apiClient.delete(`orders/${orderId}`)
     }
 };

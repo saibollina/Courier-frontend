@@ -29,8 +29,8 @@ const navigation = ref([
   { name: 'Orders', href: '#', icon: BriefcaseIcon, count: '', current: router.currentRoute.value.path === '/ordersPlaced', roles: [1, 3] },
   { name: 'My orders', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/myOrders', roles: [1, 2,3] },
   { name: 'Assigned order', href: '#', icon: ClipboardDocumentListIcon, count: '', current: router.currentRoute.value.path === '/assignedOrder', roles: [2] },
-  { name: 'Reports', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/reports', roles: [3] },
-  { name: 'Profile', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/profile', roles: [] }
+  // { name: 'Reports', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/reports', roles: [3] },
+  // { name: 'Profile', href: '#', icon: ChartPieIcon, count: '', current: router.currentRoute.value.path === '/profile', roles: [] }
 ])
 const isUserActive = ref(false)
 onMounted(async () => {
@@ -39,7 +39,6 @@ onMounted(async () => {
   }
   const loggedInUser = JSON.parse(localStorage.getItem("user"))
   const res = await UserServices.getUserById(loggedInUser.id)
-  console.log("sdfghnjk,l===>",res.data)
   isUserActive.value = res.data.active
 });
 const snackbar = ref({
@@ -63,11 +62,11 @@ async function handleSignout (){
     })
 }
 
-//TODO
+
 function handleProfileStatus (){
-  console.log("pressedd profile")
+
   isUserActive.value = !isUserActive.value
-  // router.push({ name: "profile" })
+
   UserServices.updateUserStatus(loggedInUser,isUserActive.value)
 }
 function closeSnackBar() {
