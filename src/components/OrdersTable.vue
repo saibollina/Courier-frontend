@@ -7,12 +7,13 @@ import {
 } from '@heroicons/vue/24/outline';
 import OrderEditModal from '../components/OrderEditModal.vue';
 import OrderViewModal from '../components/OrderViewModal.vue';
+import OrderDeleteModal from '../components/OrderDeleteModal.vue';
 
 const openView = ref(false)
 const openEdit = ref(false)
 const openRemove = ref(false)
 const orderId = ref('')
-const props = defineProps(["orders","enableEditActions"]);
+const props = defineProps(["orders","enableEditActions","reftechOrders"]);
 
 function handleView(orderid){
     orderId.value= orderid
@@ -89,6 +90,8 @@ function handleRemove(orderid){
         </div>
       </div>
         <OrderViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :orderId="orderId"/> 
-        <OrderEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :user="userId" :orderId="orderId"/>
+        <OrderEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :reftechOrders="props.reftechOrders" :user="userId" :orderId="orderId"/>
+        <OrderDeleteModal v-if="openRemove" :show="openRemove" :function="handleRemove" :reftechOrders="props.reftechOrders" :user="userId" :orderId="orderId"/>
+
     </div>
 </template>

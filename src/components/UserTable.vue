@@ -38,7 +38,7 @@ const user = ref({
   phoneNumber: ''
 })
 const isCreateAccount = ref(false);
-const props = defineProps(["people", "userRole","enableAddUser","refetchUsers"]);
+const props = defineProps(["people", "userRole","enableAddUser","refetchUsers","enableReport"]);
 function getEployeeRole(roleId) {
   const roles = new Map([
     [1, 'Clerks'],
@@ -93,7 +93,6 @@ async function createAccount() {
             snackbar.value.color = "green";
             snackbar.value.text = "Account created successfully!";
             isCreateAccount.value = false;
-            // router.push({ name: "login" });
         })
         .catch((error) => {
             console.log(error);
@@ -190,7 +189,7 @@ function closeSnackBar() {
         </div>
       </div>
     </div>
-    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :userRole="props.userRole" />
+    <UserViewModal v-if="openView" :show="openView" :function="handleView" :user="userId" :userRole="props.userRole" :enableReport="props.enableReport"/>
     <UserEditModal v-if="openEdit" :show="openEdit" :function="handleEdit" :refetchUsers="props.refetchUsers" :user="userId" :userRole="props.userRole" />
     <DeleteUserModal v-if="openRemove" :show="openRemove" :function="handleRemove"  :refetchUsers="props.refetchUsers" :user="userId"  :userRole="props.userRole"/>
     <v-dialog persistent v-model="isCreateAccount" width="800">

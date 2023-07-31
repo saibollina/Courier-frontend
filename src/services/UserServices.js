@@ -12,14 +12,14 @@ export default {
     return apiClient.post("users", user);
   },
   addCustomer(user){
-    console.log('customer', user)
+
     return apiClient.post("customers", user);
   },
   updateUser(user) {
     return apiClient.put(`users/${user.id}`, user);
   },
   updateUserStatus(user,status) {
-    console.log("status", status)
+
     return apiClient.put(`users/updateStatus/${user.id}`, {status});
   },
   updateCustomer(user) {

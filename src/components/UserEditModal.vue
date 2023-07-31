@@ -69,12 +69,13 @@ async function updateUser() {
             }
             updateEnable.value = false
             setSnackBar(true,'User updated!','green')
+            closeModal()
             props.refetchUsers() 
         } else {
             setSnackBar(true,'No change in user data','error')
         }
     } catch (error) {
-        console.log('error');
+        console.log('error', error);
         setSnackBar(true,error.response.data.message,'error')
     }
 

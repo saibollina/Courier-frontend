@@ -11,7 +11,7 @@ import UserServices from '../services/UserServices';
 import vSelect from 'vue-select'
 import OrderServices from '../services/OrderServices';
 
-const props = defineProps(['function', 'user','userRole','orderId'])
+const props = defineProps(['function', 'user','userRole','orderId',"reftechOrders"])
 const isOpen = ref(false);
 const updateEnable = ref(true);
 const order = ref({
@@ -37,7 +37,9 @@ const order = ref({
     receiverLastName:'',
     receiverPhoneNumber:'' ,
     status:' ',
-    pickedUpBy:''
+    pickedUpBy:'',
+    pickupLocation:'    ',
+    dropLocation: '   '
 })
 const deliveryPersons = ref([
     {
@@ -94,6 +96,8 @@ async function updateOrderDetails() {
             await OrderServices.updateOrder(updatedOrder);
             updateEnable.value = false
             setSnackBar(true,'Order updated!','green')
+            closeModal()
+            props.reftechOrders()
         } else {
             setSnackBar(true,'No change in Order details','error')
         }
@@ -121,6 +125,9 @@ async function fetchActiveDeliveryPersons(){
     ...person,
     label:person.name
   }));
+}
+const getFullAddress = (value)=>{
+  return `${value[0]} Avenue ${value[1]} Street`
 }
 </script>
 
@@ -183,7 +190,7 @@ async function fetchActiveDeliveryPersons(){
                                             <div class="mt-1">
                                                 <input type="text" name="pickupLocation" id="pickupLocation"
                                                     
-                                                    :value="order.pickupLocation"
+                                                    :value="getFullAddress(order.pickupLocation)"
                                                     :disabled="true"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>
@@ -226,7 +233,7 @@ async function fetchActiveDeliveryPersons(){
                                             <div class="mt-1">
                                                 <input type="text" name="dropLocation" id="dropLocation"
                                                     
-                                                    :value="order.dropLocation"
+                                                    :value="getFullAddress(order.dropLocation)"
                                                     :disabled="true"
                                                     class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
                                             </div>
