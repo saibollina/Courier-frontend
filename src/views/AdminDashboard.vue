@@ -33,6 +33,7 @@ const stats = ref({
     "successRate": 0,
     'numberOfCustomers': 0,
     "ordersDeliveredCount": 0,
+    "failureRate":0
 })
 const statuses = { 1: 'text-green-400 bg-green-400/10', 0: 'text-rose-400 bg-rose-400/10' }
 const activityItems = ref([
@@ -79,24 +80,12 @@ onMounted(async()=>{
 </script>
 <template>
   <div class="flex flex-1 ">
-    <!-- <SideNavBar /> -->
+
     <div class="mt-8">
 
 
       <main>
         <header>
-          <!-- Secondary navigation -->
-          <!-- <nav class="flex overflow-x-auto border-b border-white/10 py-4 bg-gray-900">
-            <ul role="list" class="flex min-w-full flex-none gap-x-6 px-4 text-sm font-semibold leading-6 text-gray-400 sm:px-6 lg:px-8">
-              <li v-for="item in secondaryNavigation" :key="item.name">
-                <a :href="item.href" :class="item.current ? 'text-primary' : ''">{{ item.name }}</a>
-              </li>
-            </ul>
-          </nav> -->
-
-          <!-- Heading -->
-          <!-- <div class="flex flex-col items-start justify-between gap-x-8 gap-y-4 bg-gray-900 px-4 py-4 sm:flex-row sm:items-center sm:px-6 lg:px-8">
-          </div> -->
 
           <!-- Stats -->
           <div class="grid grid-cols-1 bg-gray-900 sm:grid-cols-2 lg:grid-cols-4">
@@ -148,7 +137,7 @@ onMounted(async()=>{
             <div  :class="['sm:border-l border-t border-white/5 py-6 px-4 sm:px-6 lg:px-8']">
               <p class="text-sm font-medium leading-6 text-gray-400">Delivered out of Time</p>
               <p class="mt-2 flex items-baseline gap-x-2">
-                <span class="text-4xl font-semibold tracking-tight text-white">{{ (100 - stats.successRate).toFixed(2) }} %</span>
+                <span class="text-4xl font-semibold tracking-tight text-white">{{ stats.failureRate.toFixed(2) }} %</span>
               </p>
             </div>
           </div>
@@ -170,20 +159,20 @@ onMounted(async()=>{
                 <th scope="col" class="py-2 pl-4 pr-8 font-semibold sm:pl-6 lg:pl-8">User</th>
                 <th scope="col" class="hidden py-2 pl-0 pr-8 font-semibold sm:table-cell">Role</th>
                 <th scope="col" class="py-2 pl-0 text-right font-semibold sm:pr-8 sm:text-left lg:pr-20">Status</th>
-                <!-- <th scope="col" class="hidden py-2 pl-0 pr-4 text-right font-semibold sm:table-cell sm:pr-6 lg:pr-8">Deployed at</th> -->
+
               </tr>
             </thead>
             <tbody class="divide-y divide-white/5">
               <tr v-for="item in activityItems" :key="item.commit">
                 <td class="py-4 pl-4 pr-8 sm:pl-6 lg:pl-8">
                   <div class="flex items-center gap-x-4">
-                    <!-- <img :src="item.user.imageUrl" alt="" class="h-8 w-8 rounded-full bg-gray-800" /> -->
+
                     <div class="truncate text-sm font-medium leading-6 text-white">{{ item.name }}</div>
                   </div>
                 </td>
                 <td class="hidden py-4 pl-0 pr-4 sm:table-cell sm:pr-8">
                   <div class="flex gap-x-3">
-                    <!-- <div class="font-mono text-sm leading-6 text-gray-400">{{ item.role }}</div> -->
+
                     <span class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20">{{ getEployeeRole(item.role) }}</span>
                   </div>
                 </td>
@@ -195,10 +184,6 @@ onMounted(async()=>{
                     <div class="hidden text-white sm:block">{{ item.status ? 'Active': 'Offline' }}</div>
                   </div>
                 </td>
-                <!-- <td class="hidden py-4 pl-0 pr-8 text-sm leading-6 text-gray-400 md:table-cell lg:pr-20">{{ item.orderCount }}</td> -->
-                <!-- <td class="hidden py-4 pl-0 pr-4 text-right text-sm leading-6 text-gray-400 sm:table-cell sm:pr-6 lg:pr-8">
-                  <time :datetime="item.dateTime">{{ item.date }}</time>
-                </td> -->
               </tr>
             </tbody>
           </table>

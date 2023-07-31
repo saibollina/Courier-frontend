@@ -3,6 +3,7 @@ import SideNavBar from "../components/SideNavBar.vue";
 import { ref, onMounted } from "vue";
 import OrderServices from '../services/OrderServices.js';
 import NoOrdersModal from '../components/NoOrdersModal.vue';
+import LocationServices from '../services/LocationServices';
 
 const snackbar = ref({
   value: false,
@@ -43,7 +44,20 @@ const order = ref({
   estimatedDeliveryTime: '',
   pickUpTime:'',
 });
-
+const tripInfo = ref({
+        officeToSource:{
+          numberOfHops:0,
+          path:[]
+        },
+        sourceToDestination:{
+          numberOfHops:0,
+          path:[]
+        },
+        destinationToOffice:{
+          numberOfHops:0,
+          path:[]
+        }
+      })
 const readyToPickup = ref(true);
 const delivered = ref(false);
 async function getAssignedLiveOrder (){
@@ -55,11 +69,16 @@ async function getAssignedLiveOrder (){
       order.value = newOrder;
       readyToPickup.value = order.value.status === 'DP-assigned'
       delivered.value = order.value.status === 'Delivered'
-      console.log('Assigned orders==>', order.value)
+      const tripRes = await LocationServices.getFullTrip(newOrder)
+      tripInfo.value = tripRes.data
     }
   } catch (error) {
     console.error(error);
   }
+}
+function contructTripRoute(path){
+
+  return path.join(" -> ")
 }
 onMounted(getAssignedLiveOrder);
 
@@ -73,7 +92,6 @@ const updateOrder = async (status) => {
       await OrderServices.updateDeliveryTime({
         ...order.value
       });
-      // await getAssignedLiveOrder();
     }
       
     status === "Picked-Up" ? readyToPickup.value = false : delivered.value = true
@@ -87,7 +105,7 @@ const updateOrder = async (status) => {
   <div class="flex flex-1 ">
     <SideNavBar />
     <div v-if="order.id !== ''" class="mt-4 border-gray-200 pt-2">
-      <h3 class="text-lg font-medium leading-6 text-gray-900">Pickup info</h3>
+      <h3 class="text-lg font-medium leading-6 text-gray-900 border-b">Pickup info</h3>
       <div class="my-2 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4 ">
         <div>
           <label for="first-name" class="block text-sm font-medium text-gray-700">First
@@ -184,6 +202,33 @@ const updateOrder = async (status) => {
             :class="[ !(readyToPickup || delivered)? 'bg-[#80162B]' : 'bg-[#80162B] opacity-50', 'block rounded-md bg-[#80162B] px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-#80162B] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:bg-[#80162B]']">Delivered</button>
         </div>
       </div>
+    </div>
+    <div v-if="order.id !== ''"  class="mt-4 border-gray-200 pt-2 ml-4">
+      <h3 class="text-lg font-medium leading-6 text-gray-900 border-b">Trip info</h3>
+      <div class="my-2 sm:col-span-2">
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Office  Location To Pickup Location</label>
+          <div class="mt-1">
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.officeToSource.path)"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+        <div class="my-6 sm:col-span-2">
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Pickup Location to Drop Location</label>
+          <div class="mt-1">
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.sourceToDestination.path)"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Drop Location To Office</label>
+          <div class="mt-1">
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.destinationToOffice.path)"
+              :disabled="true"
+              class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
+          </div>
+        </div>
     </div>
     <div v-if="order.id === ''">
       <NoOrdersModal></NoOrdersModal>

@@ -19,7 +19,14 @@ const stats = ref({
     "ordersAssigend":0,
     "ordersDelivered":0,
     "ordersInProgress":0,
-    "totalBonusEarned":0
+    "totalBonusEarned":0,
+    "pastWeekOrders":[
+      {
+        "notOnTimeCount":0,
+        "onTimeCount":0,
+        "date":''
+      }
+    ]
 })
 
 const deliverydData = ref({
@@ -38,21 +45,6 @@ const deliverydData = ref({
     ]
 });
 
-// var deliverydData = {
-//     labels: ["Chocolate", "Vanilla", "Strawberry", "Chocolate", "Vanilla", "Strawberry", "Chocolate"],
-//     datasets: [
-//         {
-//             label: "Delivered in time",
-//             backgroundColor: "#f87979",
-//             data: [3,7,4, 3, 7,4, 3]
-//         },
-//         {
-//             label: "Not delivered in time",
-//             backgroundColor: "#a97654",
-//             data: [4,3,5, 7,4, 3, 5]
-//         },
-//     ]
-// };
 const chartOptions = {
   responsive: true,
   maintainAspectRatio: true,

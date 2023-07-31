@@ -139,8 +139,8 @@ async function placeOrder() {
         customerID: customer.value.id,
         orderedBy: loggedInUser.id,
         cost: cost.value.totalAmount,
-        pickupLocation: order.value.pickupLocation.label,
-        dropLocation: order.value.dropLocation.label,
+        pickupLocation: order.value.pickupLocation.id,
+        dropLocation: order.value.dropLocation.id,
         status: 'Order-placed',
         receiverPhoneNumber: order.value.receiverPhoneNumber,
         receiverLastName:order.value.receiverLastName,
@@ -328,10 +328,6 @@ const getFullAddress = (value)=>{
                                     </div>
                                 </div>
                                 <dl class="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
-                                    <!-- <div class="flex items-center justify-between">
-                                        <dt class="text-sm">Total</dt>
-                                        <dd class="text-sm font-medium text-gray-900">${{ cost.totalAmount }}</dd>
-                                    </div> -->
                                     <div class="flex items-center justify-between">
                                         <dt class="text-base font-medium">Estimated time</dt>
                                         <dd class="text-sm font-medium text-gray-900">{{ cost.estimatedTime }} mins</dd>

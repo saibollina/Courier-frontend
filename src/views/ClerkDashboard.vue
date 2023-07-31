@@ -105,11 +105,11 @@ function getPastSevenDays(data) {
 onMounted(async()=>{
     const loggedInUser = JSON.parse(localStorage.getItem("user"))
     const res = await StatsServices.getClerkStats(loggedInUser.id)
-    console.log(res.data)
+
     stats.value= res.data;
 
 const abc= getPastSevenDays(res.data)
-console.log("abc---", abc)
+
     deliverydData.value = {
     labels:abc.label ,
     datasets: abc.datasets
