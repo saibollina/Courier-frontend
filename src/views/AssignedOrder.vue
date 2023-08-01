@@ -208,7 +208,7 @@ const updateOrder = async (status) => {
       <div class="my-2 sm:col-span-2">
           <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Office  Location To Pickup Location</label>
           <div class="mt-1">
-            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.officeToSource.path)"
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.officeToSource.path)" style="overflow-x: auto;width:400px;"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
@@ -216,7 +216,7 @@ const updateOrder = async (status) => {
         <div class="my-6 sm:col-span-2">
           <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Pickup Location to Drop Location</label>
           <div class="mt-1">
-            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.sourceToDestination.path)"
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.sourceToDestination.path)" style="overflow-x: auto;width:400px;"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
@@ -224,7 +224,7 @@ const updateOrder = async (status) => {
         <div class="sm:col-span-2">
           <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Drop Location To Office</label>
           <div class="mt-1">
-            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.destinationToOffice.path)"
+            <input type="text" name="phoneNumber" id="phoneNumber" autocomplete="phoneNumber" :value="contructTripRoute(tripInfo.destinationToOffice.path)" style="overflow-x: auto;width:400px;"
               :disabled="true"
               class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" />
           </div>
